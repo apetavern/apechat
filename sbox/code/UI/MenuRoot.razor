@@ -1,0 +1,93 @@
+﻿@using Sandbox
+@using Sandbox.Menu
+@using Sandbox.UI
+@using System
+
+@attribute [StyleSheet]
+@inherits RootPanel
+@implements IGameMenuPanel
+@namespace ApeChat
+
+<root>
+    <div class="app">
+        <div class="sidebar">
+            @* TODO: Add a little arrow pointing to currently selected *@
+            <button 
+                @onclick=@(() => SetActiveTab(Tab.Channels))
+                class="sidebar-button @IsSelected(Tab.Channels)"
+                icon="chat_bubble"
+            />
+            <button 
+                @onclick=@(() => SetActiveTab(Tab.Settings))
+                class="sidebar-button margin-top-auto @IsSelected(Tab.Settings)"
+                icon="settings"
+            />
+        </div>
+        <div class="navigation">
+            @if (CurrentTab == Tab.Channels)
+            {
+                <textentry 
+                    class="channel-selector"
+                    placeholder="Create or join a channel.."
+                    onsubmit=@(() => OnChannelSelectorSubmit())
+                    @ref="ChannelEntry"
+                />
+                <div class="channel-container">
+                    @foreach ( var (_, channel) in ChatManager.Channels )
+                    {
+                        <div class="channel">
+                            <p class="channel-name">@channel.Name</p>
+                            <p class="channel-meta">@channel.UserCount users</p>
+                        </div>
+                    }
+                </div>
+            }
+            else if (CurrentTab == Tab.Settings)
+            {
+                <div>Settings</div>
+            }
+        </div>
+        <div class="content">
+            <div class="chat-header">
+                <p class="chat-header-title">test-channel</p>
+                <p class="flex-end">12 users</p>
+            </div>
+        </div>
+    </div>
+</root>
+
+@code {
+    private enum Tab
+    {
+        Channels,
+        Settings
+    }
+
+    private Tab CurrentTab = Tab.Channels;
+    private TextEntry ChannelEntry { get; set; }
+
+    private void SetActiveTab(Tab tab)
+    {
+        CurrentTab = tab;
+    }
+
+    private string IsSelected(Tab tab)
+    {
+        return CurrentTab == tab ? "selected" : "";
+    }
+
+    void OnChannelSelectorSubmit()
+    {
+        if (string.IsNullOrEmpty(ChannelEntry.Text))
+            return;
+
+        ChatManager.ChannelCreate(ChannelEntry.Text);
+        ChannelEntry.Text = "";
+    }
+
+    protected override int BuildHash()
+    {
+        return HashCode.Combine(Time.Now);
+        // return HashCode.Combine(CurrentTab, ChatManager.Channels);
+    }
+}
