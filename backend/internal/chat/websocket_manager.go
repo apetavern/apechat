@@ -66,7 +66,9 @@ func (m *Manager) newUpgrader() *websocket.Upgrader {
 	u := websocket.NewUpgrader()
 	u.KeepaliveTime = keepAliveTime
 	u.CheckOrigin = func(r *http.Request) bool {
-		return true
+		checkReferrer := r.Header.Get("Referer") == "https://sbox.facepunch.com/"
+		checkAgent := r.Header.Get("User-Agent") == "facepunch-sbox"
+		return checkReferrer && checkAgent
 	}
 
 	var client *Client
