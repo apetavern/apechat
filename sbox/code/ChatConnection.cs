@@ -58,6 +58,13 @@ public class ChatConnection
 				};
 				_ = SendMessage( Json.Serialize( e ) );
 				break;
+			case EventType.Heartbeat:
+				var heartbeat = new Event
+				{
+					MessageType = (int)EventType.Heartbeat,
+				};
+				_ = SendMessage( Json.Serialize( heartbeat ) );
+				break;
 			default:
 				break;
 		}

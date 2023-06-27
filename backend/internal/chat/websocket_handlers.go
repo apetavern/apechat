@@ -3,7 +3,6 @@ package chat
 import (
 	"encoding/json"
 	"errors"
-	"github.com/lesismal/nbio/nbhttp/websocket"
 )
 
 var (
@@ -29,6 +28,7 @@ func (m *Manager) setupEventHandlers() {
 	m.handlers[int(Message)] = handleChatMessage
 	m.handlers[int(Subscription)] = handleSubscribeMessage
 	m.handlers[int(ClientInfo)] = handleClientInfo
+	m.handlers[int(Heartbeat)] = handleHeartbeat
 }
 
 // handleChatMessage accepts and handles a chat message from a chat.Client
@@ -109,14 +109,6 @@ func handleClientInfo(e Event, c *Client) error {
 	return nil
 }
 
-func pingMessageHandler(conn *websocket.Conn, _ string) {
-	if err := conn.WriteMessage(websocket.PongMessage, []byte("PONG")); err != nil {
-		_ = conn.Close()
-	}
-}
-
-func pongMessageHandler(conn *websocket.Conn, _ string) {
-	if err := conn.WriteMessage(websocket.PingMessage, []byte("PING")); err != nil {
-		_ = conn.Close()
-	}
+func handleHeartbeat(e Event, c *Client) error {
+	return nil
 }

@@ -46,4 +46,5 @@ public enum EventType
 	Subscription = 1,
 	ChannelInfo = 2,
 	ClientInfo = 3,
+	Heartbeat = 99,
 }

@@ -20,6 +20,7 @@ const (
 	Subscription EventType = 1
 	ChannelInfo  EventType = 2
 	ClientInfo   EventType = 3
+	Heartbeat    EventType = 99
 )
 
 type SendChatMessageEvent struct {

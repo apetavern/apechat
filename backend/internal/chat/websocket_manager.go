@@ -17,6 +17,7 @@ import (
 
 var (
 	errBeforeUpgrade = flag.Bool("error-before-upgrade", false, "return an error on upgrade with body")
+	keepAliveTime    = time.Second * 30
 )
 
 // Manager holds references to all clients, channels, and handlers
@@ -63,12 +64,10 @@ func (m *Manager) removeClient(client *Client) {
 
 func (m *Manager) newUpgrader() *websocket.Upgrader {
 	u := websocket.NewUpgrader()
-	//u.KeepaliveTime = time.Second * 30
+	u.KeepaliveTime = keepAliveTime
 	u.CheckOrigin = func(r *http.Request) bool {
 		return true
 	}
-	u.SetPingHandler(pingMessageHandler)
-	u.SetPongHandler(pongMessageHandler)
 
 	var client *Client
 	u.OnMessage(func(c *websocket.Conn, messageType websocket.MessageType, data []byte) {
@@ -92,6 +91,8 @@ func (m *Manager) newUpgrader() *websocket.Upgrader {
 		client = NewClient(conn, m)
 		m.addClient(client)
 
+		go client.handleHeartbeat()
+
 		// Request info from the client
 		if jsonEvent, err := BuildEvent(ClientInfo, ""); err == nil {
 			_ = conn.WriteMessage(1, jsonEvent)
@@ -100,7 +101,9 @@ func (m *Manager) newUpgrader() *websocket.Upgrader {
 
 	u.OnClose(func(c *websocket.Conn, err error) {
 		fmt.Println("OnClose:", c.RemoteAddr().String(), err)
+		m.removeClient(client)
 	})
+
 	return u
 }
 
@@ -118,6 +121,11 @@ func (m *Manager) onWebsocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		panic(err)
+	}
+
+	if err := conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
+		log.Println(err)
+		return
 	}
 
 	err = conn.SetReadDeadline(time.Time{})
