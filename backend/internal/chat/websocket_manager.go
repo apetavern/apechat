@@ -49,16 +49,20 @@ func (m *Manager) addClient(client *Client) {
 	m.clients[client] = true
 }
 
-func (m *Manager) removeClient(client *Client) {
+func (m *Manager) removeClient(c *Client) {
 	m.Lock()
 	defer m.Unlock()
 
-	if _, ok := m.clients[client]; ok {
-		err := client.Connection.Close()
+	for channel, _ := range m.channels {
+		channel.Unsubscribe(*c)
+	}
+
+	if _, ok := m.clients[c]; ok {
+		err := c.Connection.Close()
 		if err != nil {
 			fmt.Printf("error occured while closing connection: %v\n", err)
 		}
-		delete(m.clients, client)
+		delete(m.clients, c)
 	}
 }
 
