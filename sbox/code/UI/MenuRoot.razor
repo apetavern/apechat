@@ -35,7 +35,7 @@
                 <div class="channel-container">
                     @foreach ( var (_, channel) in ChatManager.Channels )
                     {
-                        <div class="channel">
+                        <div class="channel" onclick=@(() => SetActiveChannel(channel.Name))>
                             <p class="channel-name">@channel.Name</p>
                             <p class="channel-meta">@channel.UserCount users</p>
                         </div>
@@ -48,10 +48,7 @@
             }
         </div>
         <div class="content">
-            <div class="chat-header">
-                <p class="chat-header-title">test-channel</p>
-                <p class="flex-end">12 users</p>
-            </div>
+            <chatwindow />
         </div>
     </div>
 </root>
@@ -76,6 +73,11 @@
     private string IsSelected(Tab tab)
     {
         return CurrentTab == tab ? "selected" : "";
+    }
+
+    private void SetActiveChannel(string channel)
+    {
+        ChatManager.SetActiveChannel(channel);
     }
 
     void OnChannelSelectorSubmit()

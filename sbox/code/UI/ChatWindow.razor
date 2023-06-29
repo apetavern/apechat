@@ -1,0 +1,28 @@
+﻿@using Sandbox
+@using Sandbox.Menu
+@using Sandbox.UI
+@using System
+
+@attribute [StyleSheet]
+@inherits Panel
+@namespace ApeChat
+
+@if (ChatManager.ActiveChannel == null)
+{
+    <div>Nothing to see here...</div>
+}
+else
+{
+    <div class="chat-header">
+        <p class="chat-header-title">@ChatManager.ActiveChannel.Name</p>
+        <p class="flex-end">@ChatManager.ActiveChannel.UserCount users</p>
+    </div>
+}
+
+
+@code {
+    protected override int BuildHash()
+    {
+        return HashCode.Combine(Time.Now);
+    }
+}

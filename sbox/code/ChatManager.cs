@@ -10,6 +10,7 @@ public class ChatManager
 
 	public static ChatClient LocalClient => new( Game.UserName, Game.SteamId );
 	public static Dictionary<string, Channel> Channels { get; set; } = new();
+	public static Channel ActiveChannel { get; set; }
 
 	public static ChatManager Instance;
 
@@ -17,6 +18,12 @@ public class ChatManager
 	{
 		Chat = new ChatConnection();
 		Instance = this;
+	}
+
+	public static void SetActiveChannel( string channelName )
+	{
+		var channel = Channels[channelName];
+		ActiveChannel = channel;
 	}
 
 	public static void ChannelCreate( string channelName )
