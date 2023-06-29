@@ -66,6 +66,8 @@
     private Tab CurrentTab = Tab.Channels;
     private TextEntry ChannelEntry { get; set; }
 
+    private ChatManager ChatManager;
+
     private void SetActiveTab(Tab tab)
     {
         CurrentTab = tab;
@@ -89,5 +91,13 @@
     {
         return HashCode.Combine(Time.Now);
         // return HashCode.Combine(CurrentTab, ChatManager.Channels);
+    }
+
+    protected override void OnAfterTreeRender(bool firstTime)
+    {
+        base.OnAfterTreeRender(firstTime);
+
+        if (firstTime)
+            ChatManager = new ChatManager();
     }
 }

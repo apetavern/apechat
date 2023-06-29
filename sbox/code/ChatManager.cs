@@ -4,12 +4,20 @@ using System.Text.Json;
 
 namespace ApeChat;
 
-public static class ChatManager
+public class ChatManager
 {
-	private static readonly ChatConnection _chat = new();
+	private ChatConnection Chat { get; set; }
 
 	public static ChatClient LocalClient => new( Game.UserName, Game.SteamId );
 	public static Dictionary<string, Channel> Channels { get; set; } = new();
+
+	public static ChatManager Instance;
+
+	public ChatManager()
+	{
+		Chat = new ChatConnection();
+		Instance = this;
+	}
 
 	public static void ChannelCreate( string channelName )
 	{
@@ -26,6 +34,6 @@ public static class ChatManager
 			Payload = JsonDocument.Parse( payload )
 		};
 
-		_ = _chat.SendMessage( Json.Serialize( msg ) );
+		_ = Instance.Chat.SendMessage( Json.Serialize( msg ) );
 	}
 }
