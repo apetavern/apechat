@@ -7,22 +7,77 @@
 @inherits Panel
 @namespace ApeChat
 
+<root>
 @if (ChatManager.ActiveChannel == null)
 {
-    <div>Nothing to see here...</div>
+    <div>Join a channel to get started!</div>
 }
 else
 {
-    <div class="chat-header">
-        <p class="chat-header-title">@ChatManager.ActiveChannel.Name</p>
-        <p class="flex-end">@ChatManager.ActiveChannel.UserCount users</p>
-    </div>
+        <div class="chat-header">
+            <p class="chat-header-title">@ChatManager.ActiveChannel.Name</p>
+            <p class="flex-end">@ChatManager.ActiveChannel.UserCount users</p>
+        </div>
+        <div class="chat-body" @ref="ChatBody">
+            @foreach ( var chatEvent in ChatManager.ActiveChannel.Messages )
+            {
+                <div class="message @IsMe(chatEvent.Author)">
+                    @chatEvent.ToString()
+                </div>
+            }
+        </div>
+        <div class="chat-entry">
+            <textentry 
+                class="chat-textentry"
+                placeholder="Type a message.."
+                onsubmit=@(() => OnChatEntered())
+                @ref="ChatEntry" />
+        </div>
 }
-
+</root>
 
 @code {
+    private TextEntry ChatEntry { get; set; }
+    private Panel ChatBody { get; set; }
+
+    void OnChatEntered()
+    {
+        if (string.IsNullOrEmpty(ChatEntry.Text))
+            return;
+
+        ChatManager.SendMessage(ChatEntry.Text);
+        ChatEntry.Text = "";
+    }
+
     protected override int BuildHash()
     {
-        return HashCode.Combine(Time.Now);
+        var msgCount = ChatManager.ActiveChannel?.Messages?.Count ?? 0;
+        return HashCode.Combine(ChatManager.ActiveChannel, msgCount);
+    }
+
+    string IsMe(string author)
+    {
+        if (Game.UserName == author)
+        {
+            return "self-message";
+        }
+
+        return "";
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+        ChatBody?.TryScrollToBottom();
+    }
+
+    protected override void OnAfterTreeRender(bool firstTime)
+    {
+        base.OnAfterTreeRender(firstTime);
+
+        if (ChatBody != null)
+        {
+            ChatBody.PreferScrollToBottom = true;
+        }
     }
 }

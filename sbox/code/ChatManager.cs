@@ -43,4 +43,35 @@ public class ChatManager
 
 		_ = Instance.Chat.SendMessage( Json.Serialize( msg ) );
 	}
+
+	public static void SendMessage( string message )
+	{
+		var chatMsg = new ChatEvent
+		{
+			ChannelName = ActiveChannel.Name,
+			Author = LocalClient.Name,
+			Message = message,
+		};
+
+		var payload = Json.Serialize( chatMsg );
+		var msg = new Event
+		{
+			MessageType = (int)EventType.ChatMessage,
+			Payload = JsonDocument.Parse( payload )
+		};
+
+		_ = Instance.Chat.SendMessage( Json.Serialize( msg ) );
+	}
+
+	public static void HandleReceivedChatEvent( ChatEvent chatEvent )
+	{
+		if ( Channels.TryGetValue( chatEvent.ChannelName, out var channel ) )
+		{
+			channel.Messages.Add( chatEvent );
+		}
+		else
+		{
+			Log.Warning( "Received a message for a channel we do not know." );
+		}
+	}
 }

@@ -19,6 +19,11 @@ public class ChatEvent
 	[JsonPropertyName( "channel" )] public string ChannelName { get; set; }
 	[JsonPropertyName( "author" )] public string Author { get; set; }
 	[JsonPropertyName( "message" )] public string Message { get; set; }
+
+	public override string ToString()
+	{
+		return $"<{Author}>: {Message}";
+	}
 }
 
 public class ChannelInfoEvent

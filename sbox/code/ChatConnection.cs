@@ -31,7 +31,7 @@ public class ChatConnection
 		{
 			case EventType.ChatMessage:
 				var chatMessage = payload.Deserialize<ChatEvent>();
-				Log.Info( chatMessage.Message );
+				ChatManager.HandleReceivedChatEvent( chatMessage );
 				break;
 			case EventType.ChannelInfo:
 				var channelInfo = payload.Deserialize<ChannelInfoEvent>();
