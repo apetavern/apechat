@@ -8,12 +8,12 @@
 @namespace ApeChat
 
 <root>
-@if (ChatManager.ActiveChannel == null)
-{
-    <div>Join a channel to get started!</div>
-}
-else
-{
+    @if (ChatManager.ActiveChannel == null)
+    {
+        <div>Join a channel to get started!</div>
+    }
+    else
+    {
         <div class="chat-header">
             <p class="chat-header-title">@ChatManager.ActiveChannel.Name</p>
             <p class="flex-end">@ChatManager.ActiveChannel.UserCount users</p>
@@ -27,26 +27,27 @@ else
             }
         </div>
         <div class="chat-entry">
-            <textentry 
-                class="chat-textentry"
-                placeholder="Type a message.."
-                onsubmit=@(() => OnChatEntered())
-                @ref="ChatEntry" />
+            <textentry class="chat-textentry"
+                       placeholder="Type a message.."
+                       onsubmit=@OnChatEntered/>
         </div>
-}
+    }
 </root>
 
 @code {
-    private TextEntry ChatEntry { get; set; }
     private Panel ChatBody { get; set; }
 
-    void OnChatEntered()
+    void OnChatEntered(PanelEvent ev)
     {
-        if (string.IsNullOrEmpty(ChatEntry.Text))
+        if (ev.Target is not TextEntry entry)
             return;
 
-        ChatManager.SendMessage(ChatEntry.Text);
-        ChatEntry.Text = "";
+        if (ev.Value is not string content || string.IsNullOrEmpty(content))
+            return;
+
+        ChatManager.SendMessage(content.Trim());
+        entry.Text = "";
+        entry.Focus();
     }
 
     protected override int BuildHash()

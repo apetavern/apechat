@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 
@@ -65,6 +66,8 @@ public class ChatManager
 
 	public static void HandleReceivedChatEvent( ChatEvent chatEvent )
 	{
+		chatEvent.Time = DateTime.Now;
+
 		if ( Channels.TryGetValue( chatEvent.ChannelName, out var channel ) )
 		{
 			channel.Messages.Add( chatEvent );

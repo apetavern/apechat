@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace ApeChat;
@@ -19,10 +20,11 @@ public class ChatEvent
 	[JsonPropertyName( "channel" )] public string ChannelName { get; set; }
 	[JsonPropertyName( "author" )] public string Author { get; set; }
 	[JsonPropertyName( "message" )] public string Message { get; set; }
+	public DateTime Time { get; set; }
 
 	public override string ToString()
 	{
-		return $"<{Author}>: {Message}";
+		return $"{Time.ToString( "h:mm tt" )} <{Author}>: {Message}";
 	}
 }
 
