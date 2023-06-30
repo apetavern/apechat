@@ -1,10 +1,12 @@
-﻿MenuRoot {
-    background-color: #1D1F2B;
+﻿@import "Styles/_vars.scss";
+
+MenuRoot {
+    background-color: $bg;
     padding: 16px;
     font-family: Poppins;
 
     .sidebar {
-        background-color: #6785FF;
+        background-color: $blue;
         width: 128px;
         border-top-left-radius: 12px;
         border-bottom-left-radius: 12px;
@@ -15,16 +17,16 @@
         padding-bottom: 24px;
 
         .sidebar-button {
-            color: #3E58C1;
+            color: $blue;
             font-size: 48px;
             padding: 24px;
 
             &.selected {
-                color: #FAFFFF;
+                color: $white;
             }
 
             &:hover:not(.selected) {
-                color: darken(#3E58C1, 30%);
+                color: darken($blue, 30%);
             }
         }
 
@@ -34,7 +36,7 @@
     }
 
     .navigation {
-        background-color: #252837;
+        background-color: $bg-light;
         width: 512px;
         flex-direction: column;
         flex-shrink: 0;
@@ -46,11 +48,11 @@
     .channel-selector {
         margin-top: 32px;
         padding: 24px;
-        background-color: #1D1F2B;
+        background-color: $bg;
         width: 80%;
         height: 80px;
         border-radius: 12px;
-        color: #6A6D7E;
+        color: $text-dark;
         font-size: 24px;
     }
 
@@ -68,13 +70,13 @@
             padding: 16px;
             width: 80%;
             height: 128px;
-            background-color: #303346;
+            background-color: $bg-accent;
             border-radius: 12px;
             flex-shrink: 0;
-            color: #FAFFFF;
+            color: $white;
 
             &:hover {
-                background-color: darken(#303346, 30%);
+                background-color: darken($bg-accent, 30%);
             }
 
             .channel-name {
@@ -96,11 +98,11 @@
 
         .chat-header {
             padding: 24px;
-            background-color: #252837;
+            background-color: $bg-light;
             height: 100px;
             border-radius: 12px;
             align-items: center;
-            color: #FAFFFF;
+            color: $white;
 
             .chat-header-title {
                 font-size: 48px;
